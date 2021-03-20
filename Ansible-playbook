@@ -1,0 +1,25 @@
+- hosts:
+  tasks:
+  - name: Configuration of docker repo
+    command:  "sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo"
+  -name: Installation of docker
+    command: dnf install docker --nobest
+        
+  -name: Copy content to /var/www/html folder
+   copy:
+      content: "Httpd webserver configuration in docker using ansible"
+      src: "/var/www/html/index.html"
+    
+  -name: Pulling httpd image from docker repo
+   docker_image:
+      name: httpd
+      source: pull
+  -name: Creation of httpd container
+   docker_container:
+       name: "httpd-web"
+       image: "httpd"
+       state: started
+       exposed_ports: "80"
+       ports: "8080:80"
+       volumes: "/var/www/html:/usr/local/apache2/htdocs/"
+  
